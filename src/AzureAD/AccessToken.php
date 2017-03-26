@@ -106,25 +106,24 @@ class AccessToken
     /**
      * Get the public key from the certificate
      *
-     * @param String $certificate
-     * @return String Public Key
+     * @param  string $certificate
+     * @return resource Public Key
      */
     private function getPublicKey($certificate)
     {
         $certificate = openssl_x509_read($certificate);
         $publicKey = openssl_pkey_get_public($certificate);
-        $details = openssl_pkey_get_details($publicKey);
-        return $details['key'];
+        return $publicKey;
     }
 
     /**
-     * @param $token String JWT
+     * @param string   $token     Access Token from Azure AD (JWT)
+     * @param resource $publicKey
      * @return Namshi\JOSE\SimpleJWS|false
      */
     private function validateToken($token, $publicKey)
     {
         $jws = SimpleJWS::load($token);
-        $publicKey = openssl_pkey_get_public($publicKey);
         if (!$jws->isValid($publicKey)) {
             return false;
         }
